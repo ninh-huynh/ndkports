@@ -50,6 +50,7 @@ data class PackageData(
  * exposed per-ABI. Not currently implemented.
  * @property[dependencies] A list of other modules required by this module, in
  * the format described by https://google.github.io/prefab/.
+ * @property[stl] The C++ runtime library used. Must be one of:  c++_shared, c++_static, none.
  */
 data class ModuleDescription(
     val name: String,
@@ -57,6 +58,7 @@ data class ModuleDescription(
     val headerOnly: Boolean,
     val includesPerAbi: Boolean,
     val dependencies: List<String>,
+    val stl: String,
 ) : Serializable
 
 class PrefabPackageBuilder(
@@ -118,7 +120,7 @@ class PrefabPackageBuilder(
                     abi = abi.abiName,
                     api = abi.adjustMinSdkVersion(packageData.minSdkVersion),
                     ndk = ndk.version.major,
-                    stl = "c++_shared"
+                    stl = module.stl,
                 )
             )
         )
