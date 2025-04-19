@@ -41,6 +41,11 @@ abstract class ModuleProperty @Inject constructor(
     @get:Input
     val dependencies: ListProperty<String> =
         objectFactory.listProperty(String::class.java).convention(emptyList())
+
+    @Suppress("UnstableApiUsage")
+    @get:Input
+    val stl: Property<String> =
+        objectFactory.property(String::class.java).convention("none")
 }
 
 abstract class PackageBuilderTask @Inject constructor(
@@ -112,7 +117,8 @@ abstract class PackageBuilderTask @Inject constructor(
                 it.static.get(),
                 it.headerOnly.get(),
                 it.includesPerAbi.get(),
-                it.dependencies.get()
+                it.dependencies.get(),
+                it.stl.get()
             )
         }
         PrefabPackageBuilder(
