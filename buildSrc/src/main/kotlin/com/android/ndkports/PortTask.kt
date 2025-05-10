@@ -58,7 +58,15 @@ abstract class PortTask : DefaultTask() {
         }
 
         val result = pb.start()
-        val output = result.inputStream.bufferedReader().use { it.readText() }
+        val output = result.inputStream.bufferedReader().use { reader ->
+            var allText = ""
+            var line: String?
+            while ( reader.readLine().also { line = it } != null) {
+                println(line)
+                allText += line
+            }
+            allText
+        }
         if (result.waitFor() != 0) {
             throw RuntimeException("Subprocess failed with:\n$output")
         }
