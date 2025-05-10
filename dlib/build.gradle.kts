@@ -1,5 +1,5 @@
 import com.android.ndkports.CMakeCompatibleVersion
-import com.android.ndkports.TarPortTask
+import com.android.ndkports.CMakePortTask
 
 val portVersion = "19.24.6"
 
@@ -14,21 +14,21 @@ plugins {
 
 ndkPorts {
     ndkPath.set(File(project.findProperty("ndkPath") as String))
-//    source.set(project.file("v19.24.6.tar.gz"))
-    source.set(project.file("dlib-libs.tar.gz"))
+    source.set(project.file("v19.24.6.tar.gz"))
+//    source.set(project.file("dlib-libs.tar.gz"))
     minSdkVersion.set(21)
 }
 
-//val buildTask = tasks.register<CMakePortTask>("buildPort") {
-//    cmake {
-//        arg("-DANDROID_CPP_FEATURES=rtti exceptions")
-//    }
-//}
-
-val buildTask = tasks.register<TarPortTask>("buildPort") {
-
+val buildTask = tasks.register<CMakePortTask>("buildPort") {
+    cmake {
+        args(
+            "-DANDROID_CPP_FEATURES=rtti exceptions",
+            "-DCMAKE_CXX_STANDARD=17",
+            "-DBUILD_SHARED_LIBS=OFF",
+            "-DANDROID_STL=c++_static",
+        )
+    }
 }
-
 
 tasks.prefabPackage {
     version.set(CMakeCompatibleVersion.parse(portVersion))
