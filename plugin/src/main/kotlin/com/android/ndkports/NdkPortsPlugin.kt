@@ -18,6 +18,8 @@ import javax.inject.Inject
 abstract class NdkPortsExtension {
     abstract val source: RegularFileProperty
 
+    abstract val sourceDir: DirectoryProperty
+
     abstract val ndkPath: DirectoryProperty
 
     abstract val minSdkVersion: Property<Int>
@@ -37,6 +39,7 @@ class NdkPortsPluginImpl(
     private val portTask = objects.property(PortTask::class.java)
     private lateinit var prefabTask: Provider<PrefabTask>
     private lateinit var extractTask: Provider<SourceExtractTask>
+    private lateinit var symlinkTask: Provider<SymlinkSourceTask>
     private lateinit var packageTask: Provider<PackageBuilderTask>
     private lateinit var aarTask: Provider<Zip>
 
@@ -94,6 +97,15 @@ class NdkPortsPluginImpl(
             }
         }
 
+        symlinkTask = project.tasks.register(
+            "symlinkSrc", SymlinkSourceTask::class.java
+        ) {
+            with(it) {
+                sourceDir.set(extension.sourceDir)
+                outDir.set(topBuildDir.resolve("src"))
+            }
+        }
+
         packageTask = project.tasks.register(
             "prefabPackage", PackageBuilderTask::class.java
         ) {
@@ -105,7 +117,12 @@ class NdkPortsPluginImpl(
                 )
             }
             with(it) {
-                sourceDirectory.set(extractTask.get().outDir)
+                if (extension.source.isPresent) {
+                    sourceDirectory.set(extractTask.get().outDir)
+                } else if (extension.sourceDir.isPresent) {
+                    sourceDirectory.set(symlinkTask.get().outDir)
+                }
+
                 outDir.set(topBuildDir)
                 ndkPath.set(extension.ndkPath)
                 installDirectory.set(portTask.get().installDir)
@@ -128,11 +145,26 @@ class NdkPortsPluginImpl(
                     "Cannot define multiple port tasks for a single module"
                 )
             }
+            if (!extension.source.isPresent && !extension.sourceDir.isPresent) {
+                throw InvalidUserDataException(
+                    "The ndkports plugin was applied but neither `source` nor `sourceDir` was not provided. Please provide it."
+                )
+            }
+
+            if (extension.source.isPresent && extension.sourceDir.isPresent) {
+                throw InvalidUserDataException(
+                    "Cannot define `source` and `sourceDir` at the same time"
+                )
+            }
             portTaskAdded = true
             this.portTask.set(portTask)
 
             with (portTask) {
-                sourceDirectory.set(extractTask.get().outDir)
+                if (extension.source.isPresent) {
+                    sourceDirectory.set(extractTask.get().outDir)
+                } else if (extension.sourceDir.isPresent) {
+                    sourceDirectory.set(symlinkTask.get().outDir)
+                }
                 ndkPath.set(extension.ndkPath)
                 buildDir.set(topBuildDir)
                 minSdkVersion.set(extension.minSdkVersion)
