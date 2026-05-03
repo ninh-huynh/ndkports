@@ -1,7 +1,9 @@
-val kotlinVersion = "1.7.10"
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
+val kotlinVersion = "2.1.20"
 
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.7.10"
+    id("org.jetbrains.kotlin.jvm") version "2.1.20"
     id("java-gradle-plugin")
     id("maven-publish")
 }
@@ -30,16 +32,15 @@ dependencies {
 
 tasks {
     compileJava {
-        @Suppress("UnstableApiUsage")
-        options.release.set(8)
+        options.release.set(11)
     }
 
     compileKotlin {
-        kotlinOptions.jvmTarget = "1.8"
+        compilerOptions.jvmTarget.set(JvmTarget.JVM_11)
     }
 
     compileTestKotlin {
-        kotlinOptions.jvmTarget = "1.8"
+        compilerOptions.jvmTarget.set(JvmTarget.JVM_11)
     }
 }
 
