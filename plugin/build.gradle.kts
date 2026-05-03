@@ -23,6 +23,7 @@ dependencies {
     implementation("com.google.prefab:api:1.1.2")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
     implementation("org.redundent:kotlin-xml-builder:1.6.1")
+    implementation("com.android.tools.build:gradle:8.10.1")
 
     testImplementation(kotlin("test", kotlinVersion))
     testImplementation(kotlin("test-junit", kotlinVersion))
@@ -49,6 +50,10 @@ gradlePlugin {
         create("ndkports") {
             id = "com.android.ndkports.NdkPorts"
             implementationClass = "com.android.ndkports.NdkPortsPlugin"
+        }
+        create("rustjni") {
+            id = "com.android.ndkports.RustJni"
+            implementationClass = "com.android.ndkports.RustJniPlugin"
         }
     }
 }
