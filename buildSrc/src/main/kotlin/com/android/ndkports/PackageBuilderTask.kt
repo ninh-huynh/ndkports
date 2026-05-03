@@ -130,6 +130,8 @@ abstract class PackageBuilderTask @Inject constructor(
                 licensePath.get(),
                 modules,
                 dependencies.get(),
+                project.group as String, AndroidManifestCompatiblePackageName
+                    .parse(project.name)
             ),
             intermediatesDirectory.get().asFile,
             installDirectory.get().asFile,

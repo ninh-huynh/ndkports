@@ -33,6 +33,8 @@ data class PackageData(
     val licensePath: String,
     val modules: List<ModuleDescription>,
     val dependencies: Map<String, String>,
+    val mavenPackage: String,
+    val androidManifestPackageName: String,
 )
 
 /**
@@ -72,7 +74,7 @@ class PrefabPackageBuilder(
     private val modulesDirectory = prefabDirectory.resolve("modules")
 
     // TODO: Get from gradle.
-    private val packageName = "com.android.ndk.thirdparty.${packageData.name}"
+    private val packageName = "${packageData.mavenPackage}.${packageData.androidManifestPackageName}"
 
     private fun preparePackageDirectory() {
         if (packageDirectory.exists()) {
