@@ -13,6 +13,10 @@ pluginManagement {
             }
         }
     }
+
+    includeBuild("./plugin") {
+        name = "plugin-build-context"
+    }
 }
 
 include("curl")
