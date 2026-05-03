@@ -56,6 +56,7 @@ abstract class PrefabTask : DefaultTask() {
         val packages = mutableListOf<Package>()
         for (aar in aars) {
             val packagePath = outDir.resolve(aar.nameWithoutExtension)
+            packagePath.mkdirs()
             extract(aar, packagePath)
             packages.add(Package(packagePath.toPath().resolve("prefab")))
         }
